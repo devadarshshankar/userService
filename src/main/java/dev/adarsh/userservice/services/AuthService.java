@@ -13,6 +13,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.MultiValueMapAdapter;
@@ -24,13 +25,13 @@ import java.util.Optional;
 @Service
 public class AuthService  {
     private UserRepository userRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private PasswordEncoder passwordEncoder;
     private SessionRepository sessionRepository;
 
-    public AuthService(UserRepository userRepository,SessionRepository sessionRepository){//,BCryptPasswordEncoder passwordEncoder){
+    public AuthService(UserRepository userRepository, SessionRepository sessionRepository, PasswordEncoder passwordEncoder){//,BCryptPasswordEncoder passwordEncoder){
         this.userRepository=userRepository;
         this.sessionRepository=sessionRepository;
-        this.bCryptPasswordEncoder=new BCryptPasswordEncoder();
+        this.passwordEncoder=passwordEncoder;
     }
 
     public ResponseEntity<UserDto> login(String email, String password) throws Exception {
@@ -41,7 +42,7 @@ public class AuthService  {
 
         User user=userOptional.get();
 
-        if(!bCryptPasswordEncoder.matches(password,user.getPassword())){
+        if(!passwordEncoder.matches(password,user.getPassword())){
 //            throw new PasswordNotMatchesException("Wrong Password");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -96,7 +97,7 @@ public class AuthService  {
 
         User user=new User();
         user.setEmail(email);
-        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode(password));
 
         User savedUser= userRepository.save(user);
 
