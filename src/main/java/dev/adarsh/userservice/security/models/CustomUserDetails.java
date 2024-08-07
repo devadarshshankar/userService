@@ -23,6 +23,9 @@ public class CustomUserDetails implements UserDetails {
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
+    private int userId;
+
+
 
     public CustomUserDetails(User user){
         authorities=new ArrayList<>();
@@ -37,6 +40,7 @@ public class CustomUserDetails implements UserDetails {
         this.accountNonLocked =true;
         this.credentialsNonExpired =true;
         this.enabled =true;
+        this.userId=user.getId();
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -84,5 +88,12 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return this.enabled;
 //        return true;
+    }
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }
